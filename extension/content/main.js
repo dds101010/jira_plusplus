@@ -54,6 +54,83 @@ function generateDiffHTML(beforeText, afterText) {
   }
 }
 
+const JIRA_SECTION_SELECTORS = {
+  title: {
+    tag: 'div',
+    attribute: {
+      name: 'data-testid'
+      mode: 'eq'
+      value: 'issue-field-summary.ui.issue-field-summary-inline-edit--container'
+    },
+  },
+  status: {
+    tag: 'div',
+    attribute: {
+      name: 'data-test-id'
+      mode: 'eq'
+      value: 'issue.views.issue-base.context.status-and-approvals-wrapper.status-and-approval'
+    },
+  },
+  description: {
+    tag: 'div',
+    attribute: {
+      name: 'data-test-id'
+      mode: 'eq'
+      value: 'issue.views.field.rich-text.description'
+    },
+  },
+  assignee: {
+    tag: 'div',
+    attribute: {
+      name: 'data-test-id'
+      mode: 'eq'
+      value: 'issue.views.field.user.assignee'
+    },
+  },
+  issueType: {
+    tag: 'div',
+    attribute: {
+      name: 'data-testid'
+      mode: 'eq'
+      value: 'issue.views.issue-base.foundation.change-issue-type.tooltip--container'
+    },
+  },
+  linkedIssues: {
+    tag: 'div',
+    attribute:{
+      name: 'data-test-id'
+      mode: 'eq'
+      value: 'issue.views.issue-base.content.issue-links.group-container'
+    },
+    multiple: true
+  },
+  commentBox: {
+    tag: 'div',
+    attribute: {
+      name: 'data-test-id'
+      mode: 'eq'
+      value: 'issue.activity.comment'
+    },
+  },
+  commentActions: {
+    tag: 'div',
+    attribute: {
+      name: 'data-testid'
+      mode: 'reg'
+      value: 'issue-comment-base.ui.comment.ak-comment.*-footer'
+    },
+    multiple: true
+  },
+  subtasks: {
+    tag: 'div',
+    attribute: {
+      name: 'data-testid'
+      mode: 'eq'
+      value: 'issue.issue-view.views.common.child-issues-panel.issues-container'
+    }
+  },
+}
+
 function observe() {
   const observer = new MutationObserver((mutationsList) => {
     if (mutationsList.length) {
