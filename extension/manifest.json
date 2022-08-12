@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "JIRA++",
+  "short_name": "JIRA++",
+  "version": "1.0",
+  "description": "Quality of life improvements for JIRA!",
+  "icons": {
+    "16": "images/jirapp_16.png",
+    "32": "images/jirapp_32.png",
+    "48": "images/jirapp_48.png",
+    "128": "images/jirapp_128.png"
+  },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "run_at": "document_end",
+      "matches": [ "https://*.atlassian.net/*" ],
+      "js": [
+        "content/PatienceDiff.js",
+        "content/main.js"
+      ]
+    }
+  ]
+}
