@@ -1,5 +1,5 @@
 # JIRA++
-> This extension adds quality of life improvements to JIRA tickets.
+> An extension that adds quality of life improvements to JIRA tickets.
 
 ## Highlights 🔥
 
