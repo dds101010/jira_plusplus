@@ -86,7 +86,7 @@ const JIRA_SECTION_SELECTORS = {
   issueType: `div[data-testid="issue.views.issue-base.foundation.change-issue-type.tooltip--container"]`,
   linkedIssues: `div[data-test-id="issue.views.issue-base.content.issue-links.group-container"]`,
   commentBox: `div[data-test-id="issue.activity.comment"]`,
-  commentActions: `div[data-testid*="issue-comment-base.ui.comment.ak-comment.*-footer"]`, //FIXME: doesn't work
+  commentActions: `div[data-testid^="issue-comment-base.ui.comment.ak-comment."][data-testid$="-footer"]`,
   subtasks: `div[data-testid="issue.issue-view.views.common.child-issues-panel.issues-container"]`,
 }
 
