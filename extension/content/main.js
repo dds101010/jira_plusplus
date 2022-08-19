@@ -54,19 +54,15 @@ function generateDiffHTML(beforeText, afterText) {
   }
 }
 
+function stopEventPropagation(event) {
+  event.stopImmediatePropagation()
+}
+
 function setReadOnlyForSelector(selector, value) {
   let nodes = document.querySelectorAll(selector)
   if (nodes) {
     nodes.forEach((node) => {
-      if (value) {
-        // value passed, so set it
-        node.style.pointerEvents = value
-      } else {
-        // toggle otherwise
-        let current = node.style.pointerEvents
-        node.style.pointerEvents =
-          !current || current === "auto" ? "none" : "auto"
-      }
+      node.addEventListener('click', stopEventPropagation, true)
     })
   }
 }
