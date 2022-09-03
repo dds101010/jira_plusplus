@@ -58,13 +58,21 @@ function stopEventPropagation(event) {
   event.stopImmediatePropagation()
 }
 
-function setReadOnlyForSelector(selector, value) {
+function setReadOnlyForSelector(selector) {
   let nodes = document.querySelectorAll(selector)
   if (nodes) {
     nodes.forEach((node) => {
       node.addEventListener('click', stopEventPropagation, true)
     })
   }
+}
+
+function unsetReadOnlyForSelector(selector) {
+  let nodes = document.querySelectorAll(selector)
+  if (nodes) {
+    nodes.forEach((node) => {
+      node.removeEventListener('click', stopEventPropagation)
+    })
 }
 
 function configureReadOnly() {
