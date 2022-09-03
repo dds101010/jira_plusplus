@@ -20,5 +20,15 @@
         "content/main.js"
       ]
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content/main.css",
+        "content/icons/pencil-solid.svg",
+        "content/icons/right-from-bracket-solid.svg"
+      ],
+      "matches": [ "https://*.atlassian.net/*" ]
+    }
   ]
 }

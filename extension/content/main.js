@@ -96,6 +96,70 @@ function configureReadOnly() {
   })
 }
 
+function addToggleButtonStyles() {
+  const mainStylesheet = document.createElement("link")
+  mainStylesheet.rel = "stylesheet"
+  mainStylesheet.type = "text/css"
+  mainStylesheet.href = chrome.runtime.getURL("content/main.css")
+  document.querySelector("head").appendChild(mainStylesheet)
+}
+
+function getThemeColor() {
+  let header = document.querySelector("header")
+  if (!header) {
+    return "#FFFFFF"
+  }
+  return window
+    .getComputedStyle(header, null)
+    .getPropertyValue("background-color")
+}
+
+function getReadOnlyImg() {
+  return getImgForToggleButton("read-only", "content/icons/pencil-solid.svg")
+}
+
+function getEditImg() {
+  return getImgForToggleButton(
+    "editable",
+    "content/icons/right-from-bracket-solid.svg",
+  )
+}
+
+function getImgForToggleButton(id, src) {
+  let icon = document.createElement("img")
+  icon.id = id
+  icon.className = "jirapp-tgl-btn-42"
+  icon.src = chrome.runtime.getURL(src)
+  icon.style.height = "30px"
+  icon.style.margin = "10px"
+  return icon
+}
+
+function toggleReadOnlyMode() {
+  let currentStateImg = document.querySelector(".jirapp-tgl-btn-42")
+  let button = document.querySelector("#jirapp-tgl-btn-container")
+  if (currentStateImg.id === "read-only") {
+    button.replaceChild(getEditImg(), button.childNodes[0])
+  } else {
+    button.replaceChild(getReadOnlyImg(), button.childNodes[0])
+  }
+}
+
+function injectToggleButton() {
+  const parent = document.querySelector("#ak-side-navigation")
+  const button = document.createElement("a")
+  button.className = "float"
+  button.id = "jirapp-tgl-btn-container"
+  button.setAttribute("role", "button")
+  button.style.backgroundColor = getThemeColor()
+  button.style.cursor = "pointer"
+
+  button.appendChild(getReadOnlyImg())
+
+  button.addEventListener("click", toggleReadOnlyMode)
+  parent.appendChild(button)
+}
+
 const JIRA_SELECTORS_EVENT_BLOCK = {
   description: `div[data-test-id="issue.views.field.rich-text.description"]`,
   commentBox: `div[data-test-id="issue.activity.comment"]`,
@@ -126,6 +190,8 @@ function observe() {
 }
 
 function init() {
+  addToggleButtonStyles()
+  injectToggleButton()
   observe()
 }
 
