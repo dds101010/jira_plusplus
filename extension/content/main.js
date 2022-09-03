@@ -54,10 +54,68 @@ function generateDiffHTML(beforeText, afterText) {
   }
 }
 
+function eventPropagationFunc(event) {
+  event.stopImmediatePropagation()
+}
+
+function preventEventPropagation(selector) {
+  let nodes = document.querySelectorAll(selector)
+  if (nodes) {
+    nodes.forEach((node) => {
+      node.addEventListener("click", eventPropagationFunc, true)
+    })
+  }
+}
+
+function preventPointerEvents(selector) {
+  let nodes = document.querySelectorAll(selector)
+  if (nodes) {
+    nodes.forEach((node) => {
+      node.style.pointerEvents = "none"
+    })
+  }
+}
+
+// function allowEventPropagation(selector) {
+//   let nodes = document.querySelectorAll(selector)
+//   if (nodes) {
+//     nodes.forEach((node) => {
+//       node.removeEventListener('click', eventPropagationFunc)
+//     })
+//   }
+// }
+
+function configureReadOnly() {
+  // TODO: Current behavior is to make fields read-only. configuration and toggle features planned
+  Object.values(JIRA_SELECTORS_EVENT_BLOCK).forEach((selector) => {
+    preventEventPropagation(selector)
+  })
+
+  Object.values(JIRA_SELECTORS_CLICK_BLOCK).forEach((selector) => {
+    preventPointerEvents(selector)
+  })
+}
+
+const JIRA_SELECTORS_EVENT_BLOCK = {
+  description: `div[data-test-id="issue.views.field.rich-text.description"]`,
+  commentBox: `div[data-test-id="issue.activity.comment"]`,
+}
+
+const JIRA_SELECTORS_CLICK_BLOCK = {
+  issueType: `div[data-testid="issue.views.issue-base.foundation.change-issue-type.tooltip--container"]`,
+  title: `div[data-testid="issue-field-summary.ui.issue-field-summary-inline-edit--container"]`,
+  contextFields: `[data-test-id="issue.views.issue-details.issue-layout.right-most-column"]`,
+  commentActions: `div[data-testid^="issue-comment-base.ui.comment.ak-comment."][data-testid$="-footer"]`,
+  linkedIssues: `div[data-test-id="issue.views.issue-base.content.issue-links.group-container"]`,
+  customDescriptionFields: `[data-testid="issue.views.issue-details.issue-layout.container-left"] [data-testid^="issue.views.field"]`,
+  subtasks: `div[data-testid="issue.issue-view.views.common.child-issues-panel.issues-container"]`,
+}
+
 function observe() {
   const observer = new MutationObserver((mutationsList) => {
     if (mutationsList.length) {
       updateHistoryAsDiff()
+      configureReadOnly()
     }
   })
 
