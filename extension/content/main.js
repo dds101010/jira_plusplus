@@ -54,43 +54,60 @@ function generateDiffHTML(beforeText, afterText) {
   }
 }
 
-function stopEventPropagation(event) {
+function eventPropagationFunc(event) {
   event.stopImmediatePropagation()
 }
 
-function setReadOnlyForSelector(selector) {
+function preventEventPropagation(selector) {
   let nodes = document.querySelectorAll(selector)
   if (nodes) {
     nodes.forEach((node) => {
-      node.addEventListener('click', stopEventPropagation, true)
+      node.addEventListener("click", eventPropagationFunc, true)
     })
   }
 }
 
-function unsetReadOnlyForSelector(selector) {
+function preventPointerEvents(selector) {
   let nodes = document.querySelectorAll(selector)
   if (nodes) {
     nodes.forEach((node) => {
-      node.removeEventListener('click', stopEventPropagation)
+      node.style.pointerEvents = "none"
     })
+  }
 }
+
+// function allowEventPropagation(selector) {
+//   let nodes = document.querySelectorAll(selector)
+//   if (nodes) {
+//     nodes.forEach((node) => {
+//       node.removeEventListener('click', eventPropagationFunc)
+//     })
+//   }
+// }
 
 function configureReadOnly() {
   // TODO: Current behavior is to make fields read-only. configuration and toggle features planned
-  Object.values(JIRA_SECTION_SELECTORS).forEach((selector) =>
-    setReadOnlyForSelector(selector, "none"),
-  )
+  Object.values(JIRA_SELECTORS_EVENT_BLOCK).forEach((selector) => {
+    preventEventPropagation(selector)
+  })
+
+  Object.values(JIRA_SELECTORS_CLICK_BLOCK).forEach((selector) => {
+    preventPointerEvents(selector)
+  })
 }
 
-const JIRA_SECTION_SELECTORS = {
-  title: `div[data-testid="issue-field-summary.ui.issue-field-summary-inline-edit--container"]`,
-  status: `div[data-test-id="issue.views.issue-base.context.status-and-approvals-wrapper.status-and-approval"]`,
+const JIRA_SELECTORS_EVENT_BLOCK = {
   description: `div[data-test-id="issue.views.field.rich-text.description"]`,
-  assignee: `div[data-test-id="issue.views.field.user.assignee"]`,
-  issueType: `div[data-testid="issue.views.issue-base.foundation.change-issue-type.tooltip--container"]`,
-  linkedIssues: `div[data-test-id="issue.views.issue-base.content.issue-links.group-container"]`,
   commentBox: `div[data-test-id="issue.activity.comment"]`,
+}
+
+const JIRA_SELECTORS_CLICK_BLOCK = {
+  issueType: `div[data-testid="issue.views.issue-base.foundation.change-issue-type.tooltip--container"]`,
+  title: `div[data-testid="issue-field-summary.ui.issue-field-summary-inline-edit--container"]`,
+  contextFields: `[data-test-id="issue.views.issue-details.issue-layout.right-most-column"]`,
   commentActions: `div[data-testid^="issue-comment-base.ui.comment.ak-comment."][data-testid$="-footer"]`,
+  linkedIssues: `div[data-test-id="issue.views.issue-base.content.issue-links.group-container"]`,
+  customDescriptionFields: `[data-testid="issue.views.issue-details.issue-layout.container-left"] [data-testid^="issue.views.field"]`,
   subtasks: `div[data-testid="issue.issue-view.views.common.child-issues-panel.issues-container"]`,
 }
 
