@@ -54,10 +54,43 @@ function generateDiffHTML(beforeText, afterText) {
   }
 }
 
+function stopEventPropagation(event) {
+  event.stopImmediatePropagation()
+}
+
+function setReadOnlyForSelector(selector, value) {
+  let nodes = document.querySelectorAll(selector)
+  if (nodes) {
+    nodes.forEach((node) => {
+      node.addEventListener('click', stopEventPropagation, true)
+    })
+  }
+}
+
+function configureReadOnly() {
+  // TODO: Current behavior is to make fields read-only. configuration and toggle features planned
+  Object.values(JIRA_SECTION_SELECTORS).forEach((selector) =>
+    setReadOnlyForSelector(selector, "none"),
+  )
+}
+
+const JIRA_SECTION_SELECTORS = {
+  title: `div[data-testid="issue-field-summary.ui.issue-field-summary-inline-edit--container"]`,
+  status: `div[data-test-id="issue.views.issue-base.context.status-and-approvals-wrapper.status-and-approval"]`,
+  description: `div[data-test-id="issue.views.field.rich-text.description"]`,
+  assignee: `div[data-test-id="issue.views.field.user.assignee"]`,
+  issueType: `div[data-testid="issue.views.issue-base.foundation.change-issue-type.tooltip--container"]`,
+  linkedIssues: `div[data-test-id="issue.views.issue-base.content.issue-links.group-container"]`,
+  commentBox: `div[data-test-id="issue.activity.comment"]`,
+  commentActions: `div[data-testid^="issue-comment-base.ui.comment.ak-comment."][data-testid$="-footer"]`,
+  subtasks: `div[data-testid="issue.issue-view.views.common.child-issues-panel.issues-container"]`,
+}
+
 function observe() {
   const observer = new MutationObserver((mutationsList) => {
     if (mutationsList.length) {
       updateHistoryAsDiff()
+      configureReadOnly()
     }
   })
 
