@@ -17,6 +17,7 @@
       "matches": [ "https://*.atlassian.net/*" ],
       "js": [
         "content/PatienceDiff.js",
+        "content/ToggleButton.js",
         "content/main.js"
       ]
     }
@@ -25,8 +26,8 @@
     {
       "resources": [
         "content/main.css",
-        "content/icons/pencil-solid.svg",
-        "content/icons/right-from-bracket-solid.svg"
+        "icons/edit_black.svg",
+        "icons/read_black.svg"
       ],
       "matches": [ "https://*.atlassian.net/*" ]
     }
