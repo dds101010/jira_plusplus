@@ -1,3 +1,5 @@
+const JIRAPP_ATTR = "jirapp_processed"
+
 function updateHistoryAsDiff() {
   Array.from(
     document.querySelectorAll(
@@ -58,106 +60,41 @@ function eventPropagationFunc(event) {
   event.stopImmediatePropagation()
 }
 
-function preventEventPropagation(selector) {
-  let nodes = document.querySelectorAll(selector)
-  if (nodes) {
-    nodes.forEach((node) => {
-      node.addEventListener("click", eventPropagationFunc, true)
+function setPointerEvents(selector, readOnly, forced) {
+  Array.from(document.querySelectorAll(selector))
+    .filter((node) => forced || !node.getAttribute(JIRAPP_ATTR))
+    .forEach((node) => {
+      if (readOnly) {
+        node.style.pointerEvents = "none"
+      } else {
+        node.style.pointerEvents = "auto"
+      }
+      node.setAttribute(JIRAPP_ATTR, true)
     })
-  }
 }
 
-function preventPointerEvents(selector) {
-  let nodes = document.querySelectorAll(selector)
-  if (nodes) {
-    nodes.forEach((node) => {
-      node.style.pointerEvents = "none"
+function setEventPropagation(selector, readOnly, forced) {
+  Array.from(document.querySelectorAll(selector))
+    .filter((node) => forced || !node.getAttribute(JIRAPP_ATTR))
+    .forEach((node) => {
+      if (readOnly) {
+        node.addEventListener("click", eventPropagationFunc, true)
+      } else {
+        node.removeEventListener("click", eventPropagationFunc, true)
+      }
+      node.setAttribute(JIRAPP_ATTR, true)
     })
-  }
 }
 
-// function allowEventPropagation(selector) {
-//   let nodes = document.querySelectorAll(selector)
-//   if (nodes) {
-//     nodes.forEach((node) => {
-//       node.removeEventListener('click', eventPropagationFunc)
-//     })
-//   }
-// }
-
-function configureReadOnly() {
+function configureReadOnly(readOnly, forced) {
   // TODO: Current behavior is to make fields read-only. configuration and toggle features planned
   Object.values(JIRA_SELECTORS_EVENT_BLOCK).forEach((selector) => {
-    preventEventPropagation(selector)
+    setEventPropagation(selector, readOnly, forced)
   })
 
   Object.values(JIRA_SELECTORS_CLICK_BLOCK).forEach((selector) => {
-    preventPointerEvents(selector)
+    setPointerEvents(selector, readOnly, forced)
   })
-}
-
-function addToggleButtonStyles() {
-  const mainStylesheet = document.createElement("link")
-  mainStylesheet.rel = "stylesheet"
-  mainStylesheet.type = "text/css"
-  mainStylesheet.href = chrome.runtime.getURL("content/main.css")
-  document.querySelector("head").appendChild(mainStylesheet)
-}
-
-function getThemeColor() {
-  let header = document.querySelector("header")
-  if (!header) {
-    return "#FFFFFF"
-  }
-  return window
-    .getComputedStyle(header, null)
-    .getPropertyValue("background-color")
-}
-
-function getReadOnlyImg() {
-  return getImgForToggleButton("read-only", "content/icons/pencil-solid.svg")
-}
-
-function getEditImg() {
-  return getImgForToggleButton(
-    "editable",
-    "content/icons/right-from-bracket-solid.svg",
-  )
-}
-
-function getImgForToggleButton(id, src) {
-  let icon = document.createElement("img")
-  icon.id = id
-  icon.className = "jirapp-tgl-btn-42"
-  icon.src = chrome.runtime.getURL(src)
-  icon.style.height = "30px"
-  icon.style.margin = "10px"
-  return icon
-}
-
-function toggleReadOnlyMode() {
-  let currentStateImg = document.querySelector(".jirapp-tgl-btn-42")
-  let button = document.querySelector("#jirapp-tgl-btn-container")
-  if (currentStateImg.id === "read-only") {
-    button.replaceChild(getEditImg(), button.childNodes[0])
-  } else {
-    button.replaceChild(getReadOnlyImg(), button.childNodes[0])
-  }
-}
-
-function injectToggleButton() {
-  const parent = document.querySelector("#ak-side-navigation")
-  const button = document.createElement("a")
-  button.className = "float"
-  button.id = "jirapp-tgl-btn-container"
-  button.setAttribute("role", "button")
-  button.style.backgroundColor = getThemeColor()
-  button.style.cursor = "pointer"
-
-  button.appendChild(getReadOnlyImg())
-
-  button.addEventListener("click", toggleReadOnlyMode)
-  parent.appendChild(button)
 }
 
 const JIRA_SELECTORS_EVENT_BLOCK = {
@@ -179,7 +116,7 @@ function observe() {
   const observer = new MutationObserver((mutationsList) => {
     if (mutationsList.length) {
       updateHistoryAsDiff()
-      configureReadOnly()
+      configureReadOnly(true, false)
     }
   })
 
